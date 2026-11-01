@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>蟹蟹日历</title>
+<style>
+
+:root{--bg:#F3EBDD;--paper:#4A3F36;--clawd:#D97757;--card:#E9DCC6;--line:rgba(74,63,54,.2);--chip:rgba(74,63,54,.08)}
+body.night{--bg:#252A38;--paper:#E6E9F0;--card:#323849;--line:rgba(230,233,240,.18);--chip:rgba(230,233,240,.12)}
+.detail{background:var(--card)!important}.c svg{border-bottom-color:var(--line)!important}.home{background:var(--chip)!important}
+body.night .c.sel{background:rgba(230,233,240,.08)}body.night .c.we span{color:#E8957A}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--paper);font-family:system-ui,-apple-system,"PingFang SC",sans-serif;-webkit-tap-highlight-color:transparent}
+main{max-width:440px;margin:0 auto;padding:max(10px,env(safe-area-inset-top)) 6px 20px}
+.head{display:flex;align-items:center;justify-content:space-between;padding:0 12px;margin-bottom:26px}
+.head h1{font-size:22px;font-weight:600;letter-spacing:.06em;margin:0}
+.head small{font-size:12px;opacity:.6;margin-left:8px;font-weight:400}
+.head button{background:none;border:0;color:var(--paper);font-size:20px;padding:4px 12px;opacity:.75;cursor:pointer}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);font-size:10px;opacity:.55;text-align:center;margin-bottom:8px;letter-spacing:.1em}
+.wk{display:none}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);row-gap:4px;column-gap:10px;padding:0 6px}
+.head{margin-bottom:8px!important;padding:0 44px 0 4px!important}.head h1{font-size:20px!important}
+@media (min-width:900px){main{max-width:980px}.grid{grid-template-columns:repeat(6,1fr);row-gap:30px;column-gap:18px}.c svg{max-width:140px!important}}
+.c small{font-size:9px;opacity:.5;margin-left:3px}
+.c{display:flex;flex-direction:column;align-items:center;cursor:pointer;border-radius:8px;padding:2px 0}
+.c.sel{background:rgba(74,63,54,.07)}
+.c svg{display:block;width:100%;max-width:96px;aspect-ratio:58/34;overflow:visible;border-bottom:1.5px dashed rgba(74,63,54,.2)}
+.c.we span{color:#B8613F}
+.c span{font-size:11px;margin-top:2px;opacity:.85;font-variant-numeric:tabular-nums;padding-bottom:1px}
+.c.future svg{opacity:.35}.c.future span{opacity:.45}
+.c.today span{border-bottom:2px solid var(--clawd);font-weight:600;opacity:1}
+.fb{visibility:hidden}
+
+.fa{animation:fa 1.4s steps(1) infinite;animation-delay:var(--d,0s)}.fb{animation:fb 1.4s steps(1) infinite;animation-delay:var(--d,0s)}
+@keyframes fa{0%{visibility:visible}50%{visibility:hidden}}
+@keyframes fb{0%{visibility:hidden}50%{visibility:visible}}
+@media (prefers-reduced-motion:reduce){.fa,.fb{animation:none}}
+
+.k0,.k1,.k2,.k3{visibility:hidden;animation:kf .88s steps(1) infinite}.k1{animation-delay:-.66s}.k2{animation-delay:-.44s}.k3{animation-delay:-.22s}
+@keyframes kf{0%{visibility:visible}25%{visibility:hidden}100%{visibility:hidden}}
+@media (prefers-reduced-motion:reduce){.k0,.k1,.k2,.k3{animation:none}.k0{visibility:visible}}
+.home{position:fixed;right:12px;top:max(12px,env(safe-area-inset-top));width:34px;height:34px;border-radius:50%;background:rgba(74,63,54,.08);color:var(--paper);display:flex;align-items:center;justify-content:center;font-size:20px;line-height:1;text-decoration:none;z-index:3}
+
+.detail{position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:520px;padding:22px 18px calc(22px + env(safe-area-inset-bottom));background:#E2DCEA;border-radius:20px 20px 0 0;display:flex;flex-direction:column;align-items:center;box-shadow:0 -6px 24px rgba(74,63,54,.15);transform:translateY(110%);transition:transform .25s ease;z-index:2}
+body.picked .detail{transform:none}
+body.picked::before{content:'';position:fixed;inset:0;background:rgba(74,63,54,.16);z-index:1}
+.detail svg{width:100%;max-width:230px;height:auto;aspect-ratio:58/34;overflow:visible}
+.detail p{font-size:13px;margin:10px 0 0;opacity:.85;letter-spacing:.04em}
+
+.head{padding-right:118px!important}
+.tl{position:fixed;right:54px;top:max(12px,env(safe-area-inset-top));height:34px;padding:0 13px;border-radius:17px;background:var(--chip);color:var(--paper);font-size:12px;letter-spacing:.06em;display:flex;align-items:center;text-decoration:none;opacity:.8;z-index:3}
+.ev{list-style:none;margin:12px 0 0;padding:0;width:100%;max-width:320px;max-height:28vh;overflow:auto}
+.ev:empty{display:none}
+.ev li{display:flex;gap:12px;align-items:baseline;font-size:13px;line-height:1.45;padding:7px 2px;border-top:1px dashed var(--line)}
+.ev b{flex:none;min-width:3em;font-size:11px;font-weight:500;opacity:.55;letter-spacing:.06em}
+.ev i{font-style:normal;opacity:.6;font-variant-numeric:tabular-nums;margin-right:6px}
+.again{margin-top:14px;border:0;border-radius:16px;background:var(--chip);color:var(--paper);font:inherit;font-size:12px;letter-spacing:.06em;padding:8px 16px;cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+<div class="head"><button id="prev" aria-label="上个月">‹</button><div><h1 id="title"></h1><small>月历功能还在做，这里只是样子</small></div><button id="next" aria-label="下个月">›</button></div>
+<div class="wk"><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div><div>日</div></div>
+<div class="grid" id="grid"></div>
+<div class="detail" id="detail"></div>
+</main>
+
+<script src="./clawd-pool.js"></script>
+<script>
+const SPECIAL_DAYS = []; // 在此填写 YYYY-MM-DD 邮差日。
+const {POOL,PLAIN,svg,monthLooks,ym}=window.ClawdPool;
+const specialByMonth=()=>SPECIAL_DAYS.reduce((m,date)=>{if(/^\d{4}-\d{2}-\d{2}$/.test(date)){const key=date.slice(0,7),day=Number(date.slice(8));(m[key]||(m[key]=[])).push(day)}return m},{});
+const now=new Date(),TY=now.getFullYear(),TM=now.getMonth()+1,TD=now.getDate();
+let Y=TY,M=TM,sel=null;
+function state(d){const a=Y*10000+M*100+d,b=TY*10000+TM*100+TD;return a<b?'past':a===b?'today':'future'}
+function render(){
+ document.getElementById('title').innerHTML=`${M} 月<small>${Y}</small>`;
+ const special=specialByMonth(),looks=monthLooks(Y,M,special[ym(Y,M)]||[]),first=(new Date(Y,M-1,1).getDay()+6)%7,days=new Date(Y,M,0).getDate();
+ let h='';const WD='一二三四五六日';
+ for(let d=1;d<=days;d++){const st=state(d),L=looks[d],we=(first+d-1)%7>=5;
+ h+=`<div class="c ${st}${we?' we':''}${sel===d?' sel':''}" data-d="${d}" style="--d:-${(d*0.37%1.4).toFixed(2)}s">${svg(L.o,{anim:st!=='future',label:d+'号'})}<span>${d}<small>${WD[(first+d-1)%7]}</small></span></div>`}
+ document.getElementById('grid').innerHTML=h;showDetail(looks)
+}
+function showDetail(looks){const el=document.getElementById('detail'),d=sel||(Y===TY&&M===TM?TD:null);if(!d){el.innerHTML='';return}
+ const st=state(d),o=looks[d].o,isSpecial=(SPECIAL_DAYS||[]).includes(`${ym(Y,M)}-${String(d).padStart(2,'0')}`);
+ el.innerHTML=`${svg(o,{anim:st!=='future'})}<p>${M} 月 ${d} 号 · ${o.job?o.job+' · '+o.name:'那时候还没有职业安排'}${isSpecial?' · 邮差日':''}</p>`
+}
+document.getElementById('grid').addEventListener('click',e=>{const c=e.target.closest('.c');if(!c)return;sel=+c.dataset.d;document.body.classList.add('picked');render()});
+document.addEventListener('click',e=>{if(!e.target.closest('.c')&&!e.target.closest('.detail'))document.body.classList.remove('picked')});
+document.getElementById('prev').onclick=()=>{M--;if(M<1){M=12;Y--}sel=null;render()};
+document.getElementById('next').onclick=()=>{M++;if(M>12){M=1;Y++}sel=null;render()};
+render();
+</script>
+</body>
+</html>

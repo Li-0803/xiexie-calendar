@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>蟹蟹日历 · 职业图鉴</title>
+<style>
+body{margin:0;background:#6E8B74;color:#F2EDE3;font-family:system-ui,-apple-system,"PingFang SC",sans-serif}
+main{max-width:440px;margin:0 auto;padding:36px 10px 56px}
+h1{font-size:15px;font-weight:600;letter-spacing:.08em;margin:0 0 24px}
+.big{display:flex;flex-wrap:wrap;justify-content:center;gap:18px 4px}
+figure{margin:0;display:flex;flex-direction:column;align-items:center;width:48%}
+.big svg{width:100%;height:auto;aspect-ratio:58/34}
+figcaption{font-size:12px;margin-top:5px;opacity:.85}
+h2{font-size:12px;font-weight:500;opacity:.7;margin:32px 0 12px}
+.small{display:flex;flex-wrap:wrap;justify-content:space-around;gap:8px}.small svg{width:62px;height:36px}
+</style>
+</head>
+<body>
+<main>
+<h1>蟹蟹日历 · 职业图鉴</h1>
+<div class="big" id="big"></div>
+<h2>放进月历里的大小</h2>
+<div class="small" id="small"></div>
+</main>
+<script src="./clawd-pool.js"></script>
+<script>
+const {POOL,svg}=window.ClawdPool;
+document.getElementById('big').innerHTML=POOL.map(o=>`<figure>${svg(o,{anim:true})}<figcaption>${o.job} · ${o.name}</figcaption></figure>`).join('');
+document.getElementById('small').innerHTML=POOL.map(o=>svg(o,{anim:true})).join('');
+</script>
+</body>
+</html>
